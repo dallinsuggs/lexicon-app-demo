@@ -3,9 +3,16 @@ const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const Database = require("better-sqlite3");
+const { AsyncLocalStorage } = require("async_hooks");
+
+const {
+  createSession,
+  getSessionDatabase,
+  resetSessionDatabase,
+} = require("./demoDatabaseManager");
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -26,12 +33,125 @@ const vaultPath = path.resolve(
   "vault"
 );
 
-const db = new Database(databasePath);
+/*
+ * Every API route registered below this point uses
+ * the visitor-specific demo database.
+ *
+ * /api/demo/session is the one exception because it
+ * must be accessible before a session exists.
+ */
+app.use("/api", attachDemoDatabase);
+const baseDb = new Database(databasePath);
 
-db.pragma("foreign_keys = ON");
+baseDb.pragma("foreign_keys = ON");
 
 const schema = fs.readFileSync(schemaPath, "utf8");
-db.exec(schema);
+baseDb.exec(schema);
+
+/*
+ * Every API request runs inside an AsyncLocalStorage context.
+ * The db facade below resolves to the database selected for that
+ * request. This lets the existing route code continue using
+ * db.prepare(...), db.transaction(...), etc. without a global
+ * mutable database connection that could leak between visitors.
+ */
+const databaseContext = new AsyncLocalStorage();
+
+function getActiveDatabase() {
+  return databaseContext.getStore()?.db || baseDb;
+}
+
+const db = {
+  prepare(...args) {
+    return getActiveDatabase().prepare(...args);
+  },
+
+  exec(...args) {
+    return getActiveDatabase().exec(...args);
+  },
+
+  pragma(...args) {
+    return getActiveDatabase().pragma(...args);
+  },
+
+  transaction(callback) {
+    return (...args) => {
+      const activeDb = getActiveDatabase();
+
+      const transaction = activeDb.transaction(
+        (...transactionArgs) =>
+          callback(...transactionArgs)
+      );
+
+      return transaction(...args);
+    };
+  },
+};
+
+function requireDemoSession(
+  req,
+  res,
+  next
+) {
+  if (!req.demoSessionId || !req.db) {
+    return res.status(401).json({
+      error:
+        "A valid demo session is required.",
+    });
+  }
+
+  next();
+}
+
+function attachDemoDatabase(
+  req,
+  res,
+  next
+) {
+  /*
+   * Session creation must remain reachable even when a browser
+   * has no session yet, or is holding an expired session ID.
+   */
+  if (req.path === "/demo/session") {
+    next();
+    return;
+  }
+
+  const sessionId =
+    req.get("X-Demo-Session");
+
+  if (!sessionId) {
+    return res.status(401).json({
+      error:
+        "A demo session is required.",
+    });
+  }
+
+  const sessionDb =
+    getSessionDatabase(sessionId);
+
+  if (!sessionDb) {
+    return res.status(401).json({
+      error:
+        "The demo session is invalid or has expired.",
+    });
+  }
+
+  req.demoSessionId = sessionId;
+  req.db = sessionDb;
+
+  databaseContext.run(
+    {
+      db: sessionDb,
+      sessionId,
+    },
+    next
+  );
+}
+
+/* =========================================================
+   Helpers
+   ========================================================= */
 
 function ensureLexemeReviewColumn() {
   const columns = db
@@ -104,11 +224,6 @@ function ensureLexemeClassSchema() {
 }
 
 ensureLexemeClassSchema();
-
-
-/* =========================================================
-   Helpers
-   ========================================================= */
 
 function parsePositiveInteger(value) {
   const number = Number(value);
@@ -408,6 +523,115 @@ function normalizeLexemeClassName(name) {
     .replace(/\s+/g, " ")
     .toLocaleLowerCase();
 }
+
+/*
+ * Every API route registered below this point automatically uses
+ * the visitor-specific session database when X-Demo-Session is
+ * present. Routes without a session temporarily fall back to
+ * lexicon.db until the frontend session bootstrap is added.
+ */
+app.use("/api", attachDemoDatabase);
+
+/* =========================================================
+    Demo Session Endpoint
+  ========================================================= */
+
+app.post("/api/demo/session", (req, res) => {
+  try {
+    const sessionId = createSession();
+
+    const sessionDb =
+      getSessionDatabase(sessionId);
+
+    if (!sessionDb) {
+      throw new Error(
+        "Session database could not be opened."
+      );
+    }
+
+    res.status(201).json({
+      sessionId,
+    });
+  } catch (error) {
+    console.error(
+      "Failed to create demo session:",
+      error
+    );
+
+    res.status(500).json({
+      error:
+        "Demo session could not be created.",
+    });
+  }
+});
+
+app.post(
+  "/api/demo/reset",
+  requireDemoSession,
+  (req, res) => {
+    try {
+      const wasReset =
+        resetSessionDatabase(
+          req.demoSessionId
+        );
+
+      if (!wasReset) {
+        return res.status(404).json({
+          error:
+            "The demo session could not be found.",
+        });
+      }
+
+      return res.json({
+        message:
+          "Demo data restored successfully.",
+      });
+    } catch (error) {
+      console.error(
+        "Failed to restore demo data:",
+        error
+      );
+
+      return res.status(500).json({
+        error:
+          "The demo data could not be restored.",
+      });
+    }
+  }
+);
+
+app.get(
+  "/api/demo/session-test",
+  requireDemoSession,
+  (req, res) => {
+    const lexemeCount =
+      req.db
+        .prepare(`
+          SELECT COUNT(*) AS total
+          FROM lexemes
+        `)
+        .get();
+
+    const stageCount =
+      req.db
+        .prepare(`
+          SELECT COUNT(*) AS total
+          FROM language_stages
+        `)
+        .get();
+
+    return res.json({
+      sessionId:
+        req.demoSessionId,
+
+      lexemeCount:
+        lexemeCount.total,
+
+      stageCount:
+        stageCount.total,
+    });
+  }
+);
 
 /* =========================================================
    Stage-specific lexeme classes
@@ -894,24 +1118,24 @@ app.get("/api/lexemes", (req, res) => {
     lexemeClassFilter = "classified";
   }
 
-    let partOfSpeechFilter = null;
-    let partOfSpeech = null;
+  let partOfSpeechFilter = null;
+  let partOfSpeech = null;
 
-    if (
-      req.query.partOfSpeech ===
-      "unspecified"
-    ) {
-      partOfSpeechFilter = "unspecified";
-    } else if (
-      typeof req.query.partOfSpeech ===
-        "string" &&
-      req.query.partOfSpeech.trim()
-    ) {
-      partOfSpeechFilter = "specified";
+  if (
+    req.query.partOfSpeech ===
+    "unspecified"
+  ) {
+    partOfSpeechFilter = "unspecified";
+  } else if (
+    typeof req.query.partOfSpeech ===
+      "string" &&
+    req.query.partOfSpeech.trim()
+  ) {
+    partOfSpeechFilter = "specified";
 
-      partOfSpeech =
-        req.query.partOfSpeech.trim();
-    }
+    partOfSpeech =
+      req.query.partOfSpeech.trim();
+  }
 
   const stageId = req.query.stageId
     ? parsePositiveInteger(req.query.stageId)
@@ -3627,7 +3851,6 @@ app.delete("/api/ages/:id", (req, res) => {
   }
 });
 
-
 /* =========================================================
    Language lineages
    ========================================================= */
@@ -4499,7 +4722,6 @@ app.delete(
   }
 );
 
-
 app.post("/api/stages", (req, res) => {
   const code = cleanRequiredText(req.body.code);
   const name = cleanRequiredText(req.body.name);
@@ -5154,7 +5376,7 @@ app.get(
         targetStageId,
         includeArchived ? 1 : 0
       );
-    
+
     const classMatchCounts = db
       .prepare(`
         SELECT
@@ -6201,13 +6423,12 @@ app.delete("/api/stage-relations/:id", (req, res) => {
   }
 });
 
-
 /* =========================================================
    Start server
    ========================================================= */
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(
-    `Lexicon server running at http://localhost:${PORT}`
+    `Lexicon server running on port ${PORT}`
   );
 });

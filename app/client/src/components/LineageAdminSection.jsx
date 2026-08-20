@@ -1,6 +1,5 @@
+import { apiFetch } from "../api";
 import { useEffect, useState } from "react";
-
-const API_BASE_URL = "http://localhost:3001/api";
 
 const EMPTY_FORM = {
   code: "",
@@ -37,8 +36,10 @@ function LineageAdminSection() {
         ? "?includeArchived=true"
         : "";
 
-      const response = await fetch(
-        `${API_BASE_URL}/lineages${query}`
+      // loadLineages()
+
+      const response = await apiFetch(
+        `/lineages${query}`
       );
 
       const responseData = await response.json();
@@ -107,8 +108,8 @@ function LineageAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lineages`,
+      const response = await apiFetch(
+        "/lineages",
         {
           method: "POST",
           headers: {
@@ -177,8 +178,8 @@ function LineageAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lineages/${editingId}`,
+      const response = await apiFetch(
+        `/lineages/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -229,8 +230,8 @@ function LineageAdminSection() {
       setActiveActionId(lineage.id);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lineages/${lineage.id}/archive`,
+      const response = await apiFetch(
+        `/lineages/${lineage.id}/archive`,
         {
           method: "PUT",
           headers: {
@@ -274,8 +275,8 @@ function LineageAdminSection() {
       setActiveActionId(lineage.id);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lineages/${lineage.id}`,
+      const response = await apiFetch(
+        `/lineages/${lineage.id}`,
         {
           method: "DELETE",
         }

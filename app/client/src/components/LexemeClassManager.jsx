@@ -3,8 +3,7 @@ import {
   useState,
 } from "react";
 
-const API_BASE_URL =
-  "http://localhost:3001/api";
+import { apiFetch } from "../api";
 
 const EMPTY_FORM = {
   name: "",
@@ -46,8 +45,8 @@ function LexemeClassManager({
       setIsLoading(true);
       setError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${stageId}/lexeme-classes`
+      const response = await apiFetch(
+        `/stages/${stageId}/lexeme-classes`
       );
 
       const responseData =
@@ -99,8 +98,8 @@ function LexemeClassManager({
       setError("");
       setMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${stageId}/lexeme-classes`,
+      const response = await apiFetch(
+        `/stages/${stageId}/lexeme-classes`,
         {
           method: "POST",
           headers: {
@@ -187,8 +186,8 @@ function LexemeClassManager({
       setError("");
       setMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexeme-classes/${editingClassId}`,
+      const response = await apiFetch(
+        `/lexeme-classes/${editingClassId}`,
         {
           method: "PUT",
           headers: {
@@ -259,8 +258,8 @@ function LexemeClassManager({
       setError("");
       setMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexeme-classes/${lexemeClass.id}`,
+      const response = await apiFetch(
+        `/lexeme-classes/${lexemeClass.id}`,
         {
           method: "DELETE",
         }

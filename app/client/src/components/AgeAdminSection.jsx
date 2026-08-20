@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const API_BASE_URL = "http://localhost:3001/api";
+import { apiFetch } from "../api";
 
 const EMPTY_FORM = {
   code: "",
@@ -30,8 +29,8 @@ function AgeAdminSection() {
       setIsLoading(true);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/ages`
+      const response = await apiFetch(
+        "/ages"
       );
 
       const responseData = await response.json();
@@ -108,8 +107,8 @@ function AgeAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/ages`,
+      const response = await apiFetch(
+        "/ages",
         {
           method: "POST",
           headers: {
@@ -180,8 +179,8 @@ function AgeAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/ages/${editingId}`,
+      const response = await apiFetch(
+        `/ages/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -231,8 +230,8 @@ function AgeAdminSection() {
       setDeletingId(age.id);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/ages/${age.id}`,
+      const response = await apiFetch(
+        `/ages/${age.id}`,
         {
           method: "DELETE",
         }

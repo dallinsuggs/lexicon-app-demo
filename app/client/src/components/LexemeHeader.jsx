@@ -1,6 +1,10 @@
 import { Link } from "react-router";
 
-function LexemeHeader({ onNewLexeme }) {
+function LexemeHeader({
+  onNewLexeme,
+  onRestoreDemo,
+  isRestoringDemo,
+}) {
   return (
     <header className="page-header">
       <div>
@@ -16,10 +20,24 @@ function LexemeHeader({ onNewLexeme }) {
           Language Administration
         </Link>
 
+        {onRestoreDemo && (
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={onRestoreDemo}
+            disabled={isRestoringDemo}
+          >
+            {isRestoringDemo
+              ? "Restoring..."
+              : "Restore Demo Data"}
+          </button>
+        )}
+
         {onNewLexeme && (
           <button
             type="button"
             onClick={onNewLexeme}
+            disabled={isRestoringDemo}
           >
             New Lexeme
           </button>

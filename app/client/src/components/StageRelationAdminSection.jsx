@@ -1,8 +1,8 @@
+import { apiFetch } from "../api";
+
 import { useEffect, useMemo, useState } from "react";
 
 import SearchableStageSelect from "./SearchableStageSelect";
-
-const API_BASE_URL = "http://localhost:3001/api";
 
 const EMPTY_FORM = {
   sourceStageId: "",
@@ -43,11 +43,9 @@ function StageRelationAdminSection() {
         stagesResponse,
         typesResponse,
       ] = await Promise.all([
-        fetch(`${API_BASE_URL}/stage-relations`),
-        fetch(`${API_BASE_URL}/stages`),
-        fetch(
-          `${API_BASE_URL}/stage-relation-types`
-        ),
+        apiFetch("/stage-relations"),
+        apiFetch("/stages"),
+        apiFetch("/stage-relation-types"),
       ]);
 
       const [
@@ -160,8 +158,8 @@ function StageRelationAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stage-relations`,
+      const response = await apiFetch(
+        "/stage-relations",
         {
           method: "POST",
           headers: {
@@ -248,8 +246,8 @@ function StageRelationAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stage-relations/${editingId}`,
+      const response = await apiFetch(
+        `/stage-relations/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -304,8 +302,8 @@ function StageRelationAdminSection() {
       setDeletingId(relation.id);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stage-relations/${relation.id}`,
+      const response = await apiFetch(
+        `/stage-relations/${relation.id}`,
         {
           method: "DELETE",
         }

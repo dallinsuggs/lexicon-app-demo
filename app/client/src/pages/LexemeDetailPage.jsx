@@ -1,3 +1,4 @@
+import { apiFetch } from "../api";
 import { useEffect, useState } from "react";
 import {
   Link,
@@ -8,8 +9,6 @@ import {
 
 import EditLexemeForm from "../components/EditLexemeForm";
 import LexemeRelationshipEditor from "../components/LexemeRelationshipEditor";
-
-const API_BASE_URL = "http://localhost:3001/api";
 
 function createGlossFormRows(glosses) {
   return glosses.map((gloss) => ({
@@ -99,10 +98,10 @@ function LexemeDetailPage() {
         stagesResponse,
         relationTypesResponse,
       ] = await Promise.all([
-        fetch(`${API_BASE_URL}/lexemes/${id}`),
-        fetch(`${API_BASE_URL}/stages`),
-        fetch(
-          `${API_BASE_URL}/lexeme-relation-types`
+        apiFetch(`/lexemes/${id}`),
+        apiFetch("/stages"),
+        apiFetch(
+          "/lexeme-relation-types"
         ),
       ]);
 
@@ -217,8 +216,8 @@ function LexemeDetailPage() {
         setIsLoadingEditClasses(true);
         setEditError("");
 
-        const response = await fetch(
-          `${API_BASE_URL}/stages/${stageId}/lexeme-classes`
+        const response = await apiFetch(
+          `/stages/${stageId}/lexeme-classes`
         );
 
         const responseData =
@@ -392,8 +391,8 @@ function LexemeDetailPage() {
     try {
       setIsSaving(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexemes/${id}`,
+      const response = await apiFetch(
+        `/lexemes/${id}`,
         {
           method: "PUT",
           headers: {
@@ -447,8 +446,8 @@ function LexemeDetailPage() {
     try {
       setIsSavingRelationship(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexeme-relations`,
+      const response = await apiFetch(
+        "/lexeme-relations",
         {
           method: "POST",
           headers: {
@@ -487,8 +486,8 @@ function LexemeDetailPage() {
     try {
       setIsSavingRelationship(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexeme-relations/${relationId}`,
+      const response = await apiFetch(
+        `/lexeme-relations/${relationId}`,
         {
           method: "PUT",
           headers: {
@@ -535,8 +534,8 @@ function LexemeDetailPage() {
     try {
       setIsSavingRelationship(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexeme-relations/${relationId}`,
+      const response = await apiFetch(
+        `/lexeme-relations/${relationId}`,
         {
           method: "DELETE",
         }
@@ -568,8 +567,8 @@ function LexemeDetailPage() {
     setIsSavingReview(true);
     setReviewError("");
 
-    const response = await fetch(
-      `${API_BASE_URL}/lexemes/${lexeme.id}/review-status`,
+    const response = await apiFetch(
+      `/lexemes/${lexeme.id}/review-status`,
       {
         method: "PUT",
         headers: {
@@ -617,8 +616,8 @@ function LexemeDetailPage() {
       setIsSaving(true);
       setEditError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexemes/${lexeme.id}/archive`,
+      const response = await apiFetch(
+        `/lexemes/${lexeme.id}/archive`,
         {
           method: "PUT",
           headers: {
@@ -676,8 +675,8 @@ function LexemeDetailPage() {
       setIsDeleting(true);
       setDeleteError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexemes/${lexeme.id}`,
+      const response = await apiFetch(
+        `/lexemes/${lexeme.id}`,
         {
           method: "DELETE",
         }

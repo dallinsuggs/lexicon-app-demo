@@ -1,8 +1,8 @@
+import { apiFetch } from "../api";
+
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-const API_BASE_URL = "http://localhost:3001/api";
 
 /*
  * Produces matching IDs for both:
@@ -173,8 +173,8 @@ function GrammarDocument({
       setIsLoading(true);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${stageId}/grammar`
+      const response = await apiFetch(
+        `/stages/${stageId}/grammar`
       );
 
       const responseText =

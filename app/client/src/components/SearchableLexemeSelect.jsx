@@ -1,12 +1,11 @@
+import { apiFetch } from "../api";
+
 import {
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-
-const API_BASE_URL =
-  "http://localhost:3001/api";
 
 const RELATIONSHIP_SEARCH_LIMIT = 20;
 
@@ -179,8 +178,8 @@ function SearchableLexemeSelect({
 
           query.set("offset", "0");
 
-          const response = await fetch(
-            `${API_BASE_URL}/lexemes?${query.toString()}`,
+          const response = await apiFetch(
+            `/lexemes?${query.toString()}`,
             {
               signal: abortController.signal,
             }

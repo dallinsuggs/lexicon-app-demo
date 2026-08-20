@@ -1,3 +1,5 @@
+import { apiFetch } from "../api";
+
 import { useEffect, useRef, useState } from "react";
 
 import "../App.css";
@@ -8,7 +10,6 @@ import LexemeFilters from "../components/LexemeFilters";
 import LexemeHeader from "../components/LexemeHeader";
 import LexemeTable from "../components/LexemeTable";
 
-const API_BASE_URL = "http://localhost:3001/api";
 const LEXEME_PAGE_SIZE = 100;
 const FILTER_STORAGE_KEY =
   "lexemeListFilters";
@@ -70,6 +71,16 @@ function LexemeListPage() {
   );
 
   const navigate = useNavigate();
+
+  const [
+    isRestoringDemo,
+    setIsRestoringDemo,
+  ] = useState(false);
+
+  const [
+    restoreDemoError,
+    setRestoreDemoError,
+  ] = useState("");
   
   const [lexemes, setLexemes] = useState([]);
   const [totalLexemes, setTotalLexemes] = useState(0);
@@ -212,8 +223,10 @@ function LexemeListPage() {
         setIsLoadingFilterClasses(true);
         setFilterClassError("");
 
-        const response = await fetch(
-          `${API_BASE_URL}/stages/${selectedStageId}/lexeme-classes`
+        // 1. Filter-stage lexeme classes
+
+        const response = await apiFetch(
+          `/stages/${selectedStageId}/lexeme-classes`
         );
 
         const responseData =
@@ -283,10 +296,10 @@ function LexemeListPage() {
       agesResponse,
       relationTypesResponse,
     ] = await Promise.all([
-      fetch(`${API_BASE_URL}/stages`),
-      fetch(`${API_BASE_URL}/lineages`),
-      fetch(`${API_BASE_URL}/ages`),
-      fetch(`${API_BASE_URL}/lexeme-relation-types`),
+      apiFetch("/stages"),
+      apiFetch("/lineages"),
+      apiFetch("/ages"),
+      apiFetch("/lexeme-relation-types"),
     ]);
 
     const [
@@ -386,8 +399,8 @@ function LexemeListPage() {
     query.set("limit", String(LEXEME_PAGE_SIZE));
     query.set("offset", String(offset));
 
-    const response = await fetch(
-      `${API_BASE_URL}/lexemes?${query.toString()}`
+    const response = await apiFetch(
+      `/lexemes?${query.toString()}`
     );
 
     const responseData = await response.json();
@@ -624,8 +637,8 @@ function LexemeListPage() {
         setIsLoadingCreateClasses(true);
         setCreateError("");
 
-        const response = await fetch(
-          `${API_BASE_URL}/stages/${stageId}/lexeme-classes`
+        const response = await apiFetch(
+          `/stages/${stageId}/lexeme-classes`
         );
 
         const responseData =
@@ -722,8 +735,8 @@ function LexemeListPage() {
       setBulkReviewError("");
       setBulkReviewMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexemes/bulk-review-status`,
+      const response = await apiFetch(
+        "/lexemes/bulk-review-status",
         {
           method: "PUT",
           headers: {
@@ -865,8 +878,8 @@ async function handleInheritanceSourceSelected(
     isCopyingInheritedGlosses.current = true;
     setCreateError("");
 
-    const response = await fetch(
-      `${API_BASE_URL}/lexemes/${parentLexemeId}`
+    const response = await apiFetch(
+      `/lexemes/${parentLexemeId}`
     );
 
     const parentLexeme = await response.json();
@@ -983,8 +996,8 @@ async function handleInheritanceSourceSelected(
     try {
       setIsCreating(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/lexemes`,
+      const response = await apiFetch(
+        "/lexemes",
         {
           method: "POST",
           headers: {
@@ -1058,11 +1071,60 @@ async function handleInheritanceSourceSelected(
     }
   }
 
+  async function handleRestoreDemoData() {
+  const confirmed = window.confirm(
+    "Restore the demo to its original state?\n\n" +
+      "All edits, deletions, archives, newly created entries, " +
+      "and other changes made in this demo session will be discarded."
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    setIsRestoringDemo(true);
+    setRestoreDemoError("");
+
+    const response = await apiFetch(
+      "/demo/reset",
+      {
+        method: "POST",
+      }
+    );
+
+    const responseData =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        responseData.error ||
+          "The demo data could not be restored."
+      );
+    }
+
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+    setRestoreDemoError(error.message);
+  } finally {
+    setIsRestoringDemo(false);
+  }
+}
+
   return (
     <main className="app">
       <LexemeHeader
         onNewLexeme={openCreateForm}
+        onRestoreDemo={handleRestoreDemoData}
+        isRestoringDemo={isRestoringDemo}
       />
+
+      {restoreDemoError && (
+        <p className="error-message">
+          {restoreDemoError}
+        </p>
+      )}
 
       {showCreateForm && (
         <CreateLexemeForm

@@ -1,7 +1,7 @@
+import { apiFetch } from "../api";
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-
-const API_BASE_URL = "http://localhost:3001/api";
 
 const EMPTY_FORM = {
   code: "",
@@ -46,9 +46,9 @@ function StageAdminSection() {
         lineagesResponse,
         agesResponse,
       ] = await Promise.all([
-        fetch(`${API_BASE_URL}/stages${stageQuery}`),
-        fetch(`${API_BASE_URL}/lineages`),
-        fetch(`${API_BASE_URL}/ages`),
+        apiFetch(`/stages${stageQuery}`),
+        apiFetch("/lineages"),
+        apiFetch("/ages"),
       ]);
 
       const [
@@ -148,8 +148,8 @@ function StageAdminSection() {
       setIsSuggestingCode(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/suggest-code?` +
+      const response = await apiFetch(
+        `/stages/suggest-code?` +
           `lineageId=${lineageId}&ageId=${ageId}`
       );
 
@@ -248,8 +248,8 @@ function StageAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages`,
+      const response = await apiFetch(
+        "/stages",
         {
           method: "POST",
           headers: {
@@ -325,8 +325,8 @@ function StageAdminSection() {
       setIsSaving(true);
       setFormError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${editingId}`,
+      const response = await apiFetch(
+        `/stages/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -378,8 +378,8 @@ function StageAdminSection() {
       setActiveActionId(stage.id);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${stage.id}/archive`,
+      const response = await apiFetch(
+        `/stages/${stage.id}/archive`,
         {
           method: "PUT",
           headers: {
@@ -424,8 +424,8 @@ function StageAdminSection() {
       setActiveActionId(stage.id);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${stage.id}`,
+      const response = await apiFetch(
+        `/stages/${stage.id}`,
         {
           method: "DELETE",
         }

@@ -1,11 +1,9 @@
+import { apiFetch } from "../api";
 import {
   useEffect,
   useMemo,
   useState,
 } from "react";
-
-const API_BASE_URL =
-  "http://localhost:3001/api";
 
 function InheritedLexiconImport({
   targetStage,
@@ -43,8 +41,8 @@ function InheritedLexiconImport({
         setIsLoadingStages(true);
         setError("");
 
-        const response = await fetch(
-          `${API_BASE_URL}/stages?includeArchived=true`
+        const response = await apiFetch(
+          "/stages?includeArchived=true"
         );
 
         const responseData =
@@ -108,8 +106,8 @@ function InheritedLexiconImport({
           String(includeArchived),
       });
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${targetStage.id}/inheritance-import-preview?${query.toString()}`
+      const response = await apiFetch(
+        `/stages/${targetStage.id}/inheritance-import-preview?${query.toString()}`
       );
 
       const responseData =
@@ -142,8 +140,8 @@ function InheritedLexiconImport({
       setError("");
       setResultMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${targetStage.id}/inheritance-import`,
+      const response = await apiFetch(
+        `/stages/${targetStage.id}/inheritance-import`,
         {
           method: "POST",
           headers: {

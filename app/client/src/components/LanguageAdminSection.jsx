@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const API_BASE_URL = "http://localhost:3001/api";
+import { apiFetch } from "../api";
 
 const EMPTY_LANGUAGE_FORM = {
   code: "",
@@ -33,8 +32,8 @@ function LanguageAdminSection() {
       setIsLoading(true);
       setPageError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/languages`
+      const response = await apiFetch(
+        "/languages"
       );
 
       const responseData = await response.json();
@@ -115,8 +114,8 @@ function LanguageAdminSection() {
     try {
       setIsSaving(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/languages`,
+      const response = await apiFetch(
+        "/languages",
         {
           method: "POST",
           headers: {
@@ -165,8 +164,8 @@ function LanguageAdminSection() {
     try {
       setIsSaving(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/languages/${editingLanguageId}`,
+      const response = await apiFetch(
+        `/languages/${editingLanguageId}`,
         {
           method: "PUT",
           headers: {
@@ -214,8 +213,8 @@ function LanguageAdminSection() {
       setDeletingLanguageId(language.id);
       setPageError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/languages/${language.id}`,
+      const response = await apiFetch(
+        `/languages/${language.id}`,
         {
           method: "DELETE",
         }

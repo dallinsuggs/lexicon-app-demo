@@ -1,3 +1,5 @@
+import { apiFetch } from "../api";
+
 import { useEffect, useState } from "react";
 import {
   Link,
@@ -12,8 +14,6 @@ import LexemeClassManager
 
 import InheritedLexiconImport
   from "../components/InheritedLexiconImport";
-
-const API_BASE_URL = "http://localhost:3001/api";
 
 function LanguageStagePage() {
   const { id } = useParams();
@@ -68,8 +68,10 @@ function LanguageStagePage() {
       setIsLoading(true);
       setLoadError("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${id}/profile`
+      // 1. loadStage()
+
+      const response = await apiFetch(
+        `/stages/${id}/profile`
       );
 
       const responseData =
@@ -122,8 +124,10 @@ function LanguageStagePage() {
       setLexiconDeletionError("");
       setLexiconDeletionMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${id}/lexicon-deletion-preview`
+      // 2. loadLexiconDeletionPreview()
+
+      const response = await apiFetch(
+        `/stages/${id}/lexicon-deletion-preview`
       );
 
       const responseData = await response.json();
@@ -168,8 +172,10 @@ function LanguageStagePage() {
     try {
       setIsDeletingLexicon(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/stages/${id}/lexicon`,
+      // 3. handleDeleteStageLexicon()
+
+      const response = await apiFetch(
+        `/stages/${id}/lexicon`,
         {
           method: "DELETE",
           headers: {
