@@ -1,0 +1,1970 @@
+/* =========================================================
+   1. Theme
+   ========================================================= */
+
+:root {
+  font-family:
+    Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+
+  color: #20242a;
+  background: #f4f5f7;
+
+  --color-page: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f8f9fa;
+  --color-surface-hover: #fafbfc;
+
+  --color-text: #20242a;
+  --color-text-muted: #626873;
+  --color-text-secondary: #4d535d;
+
+  --color-border: #d9dde3;
+  --color-border-light: #e6e8ec;
+  --color-border-input: #b9bec7;
+
+  --color-link: #285d91;
+  --color-link-hover: #1f4b76;
+  --color-link-background: #eef4fa;
+  --color-link-background-hover: #dce9f5;
+
+  --color-error: #8a2525;
+  --color-error-border: #d6a3a3;
+  --color-error-background: #fff7f7;
+
+  --radius-small: 5px;
+  --radius-medium: 6px;
+  --radius-large: 8px;
+
+  --shadow-control-hover: 0 4px 10px rgba(32, 36, 42, 0.12);
+  --shadow-link-hover: 0 5px 12px rgba(32, 36, 42, 0.16);
+  --shadow-dropdown: 0 10px 28px rgba(32, 36, 42, 0.18);
+
+  --focus-ring: 3px solid rgba(40, 93, 145, 0.16);
+}
+
+
+/* =========================================================
+   2. Reset and base controls
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-page);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-medium);
+  color: var(--color-text);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-control-hover);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: var(--focus-ring);
+  border-color: rgba(40, 93, 145, 0.65);
+}
+
+textarea {
+  resize: vertical;
+}
+
+
+/* =========================================================
+   3. Application shell, links, and shared surfaces
+   ========================================================= */
+
+.app {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.app a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(40, 93, 145, 0.3);
+  border-radius: var(--radius-medium);
+
+  color: var(--color-link);
+  background: var(--color-link-background);
+
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.app a:hover {
+  color: var(--color-link-hover);
+  background: var(--color-link-background-hover);
+  border-color: rgba(40, 93, 145, 0.55);
+  transform: translateY(-2px) scale(1.035);
+  box-shadow: var(--shadow-link-hover);
+}
+
+.app a:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: none;
+}
+
+.app a:focus-visible {
+  outline: 3px solid rgba(40, 93, 145, 0.25);
+  outline-offset: 2px;
+}
+
+.form-panel,
+.filters,
+.lexeme-page,
+.table-wrapper,
+.admin-section,
+.status-message,
+.error-message,
+.empty-state {
+  border-radius: var(--radius-large);
+  background: var(--color-surface);
+}
+
+.form-panel,
+.filters,
+.lexeme-page,
+.table-wrapper,
+.admin-section,
+.empty-state {
+  border: 1px solid var(--color-border);
+}
+
+.status-message,
+.error-message,
+.empty-state {
+  padding: 1rem;
+}
+
+.muted-text,
+.relationship-metadata,
+.relationship-note,
+.field-help,
+.option-metadata,
+.searchable-select-empty,
+.admin-item-information span {
+  color: var(--color-text-muted);
+}
+
+
+/* =========================================================
+   4. Header and navigation
+   ========================================================= */
+
+.page-header,
+.form-heading,
+.lexeme-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1,
+.form-heading h1,
+.form-heading h2 {
+  margin: 0;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+}
+
+.page-header p,
+.form-heading p,
+.admin-section-header p {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.header-actions,
+.admin-item-actions,
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.breadcrumb {
+  margin-bottom: 1.5rem;
+}
+
+
+/* =========================================================
+   5. Forms
+   ========================================================= */
+
+.form-panel {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+}
+
+.form-heading {
+  margin-bottom: 1.25rem;
+}
+
+.form-grid,
+.metadata-grid,
+.relationship-editor-grid,
+.current-relationships,
+.relationship-display-grid,
+.relationship-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.form-panel label,
+.filters label,
+.relationship-form label,
+.admin-create-form label,
+.admin-edit-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.notes-field {
+  margin-top: 1rem;
+}
+
+.form-actions {
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.secondary-button {
+  background: var(--color-page);
+}
+
+.field-help {
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.form-error {
+  margin-top: 1rem;
+}
+
+
+/* =========================================================
+   6. Search filters and status states
+   ========================================================= */
+
+.filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 260px);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+.error-message {
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error);
+  background: var(--color-error-background);
+}
+
+.empty-state h2 {
+  margin-top: 0;
+}
+
+
+/* =========================================================
+   7. Lexeme list table
+   ========================================================= */
+
+.result-summary {
+  margin-bottom: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--color-border-light);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: #555c67;
+  background: var(--color-surface-subtle);
+  font-size: 0.9rem;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+
+.lemma-cell {
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   8. Lexeme detail page
+   ========================================================= */
+
+.lexeme-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.lexeme-header h1 {
+  margin: 0.2rem 0;
+  font-size: 2.5rem;
+}
+
+.language-label {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.part-of-speech {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.lexeme-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.lexeme-section:last-child {
+  border-bottom: none;
+}
+
+.lexeme-section h2 {
+  margin-top: 0;
+}
+
+.gloss-list,
+.form-list {
+  margin-bottom: 0;
+}
+
+.metadata-grid {
+  margin: 0;
+}
+
+.metadata-grid div {
+  padding: 1rem;
+  border: 1px solid #e1e4e8;
+  border-radius: var(--radius-medium);
+}
+
+.metadata-grid dt {
+  margin-bottom: 0.3rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.metadata-grid dd {
+  margin: 0;
+}
+
+.notes-display,
+.relationship-note {
+  white-space: pre-wrap;
+}
+
+
+/* =========================================================
+   9. Relationship display and editor
+   ========================================================= */
+
+.relationship-placeholder {
+  padding: 1rem;
+  border: 1px dashed var(--color-border-input);
+  border-radius: var(--radius-medium);
+  color: var(--color-text-muted);
+}
+
+.relationship-placeholder p {
+  margin: 0;
+}
+
+.relationship-editor,
+.create-relationship-section,
+.form-editor {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.relationship-editor h2,
+.create-relationship-section h3,
+.relationship-form h3 {
+  margin-top: 0;
+}
+
+.relationship-editor-grid,
+.current-relationships,
+.relationship-display-grid {
+  gap: 1.25rem;
+}
+
+.relationship-form {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e1e4e8;
+  border-radius: var(--radius-medium);
+}
+
+.current-relationships {
+  margin-top: 1.5rem;
+}
+
+.current-relationships ul,
+.relationship-list {
+  padding-left: 1.25rem;
+}
+
+.current-relationships li,
+.relationship-list li {
+  margin-bottom: 1rem;
+}
+
+.relationship-note {
+  margin: 0.4rem 0 0;
+}
+
+.relationship-list-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.relationship-selector-grid {
+  margin-top: 1rem;
+}
+
+
+/* =========================================================
+   10. Searchable lexeme selector
+   ========================================================= */
+
+.searchable-select {
+  position: relative;
+}
+
+.searchable-select-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.selected-lexeme-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.selected-lexeme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  padding: 0.4rem 0.45rem 0.4rem 0.65rem;
+  border: 1px solid rgba(40, 93, 145, 0.3);
+  border-radius: 999px;
+
+  color: var(--color-link);
+  background: var(--color-link-background);
+  font-size: 0.9rem;
+}
+
+.chip-remove-button {
+  width: 1.45rem;
+  height: 1.45rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  color: inherit;
+  background: transparent;
+  line-height: 1;
+}
+
+.chip-remove-button:hover {
+  color: white;
+  background: var(--color-link);
+  transform: none;
+  box-shadow: none;
+}
+
+.searchable-select-input-wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.searchable-select-input-wrapper input {
+  min-width: 0;
+  border-right: none;
+  border-radius: var(--radius-small) 0 0 var(--radius-small);
+}
+
+.dropdown-toggle {
+  padding: 0 0.8rem;
+  border-radius: 0 var(--radius-small) var(--radius-small) 0;
+}
+
+.searchable-select-menu {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  left: 0;
+
+  max-height: 20rem;
+  overflow-y: auto;
+
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-dropdown);
+}
+
+.searchable-select-option {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: none;
+  border-bottom: 1px solid var(--color-border-light);
+  border-radius: 0;
+  text-align: left;
+  background: var(--color-surface);
+}
+
+.searchable-select-option:last-child {
+  border-bottom: none;
+}
+
+.searchable-select-option:hover {
+  background: var(--color-link-background);
+  transform: none;
+  box-shadow: none;
+}
+
+.option-lemma {
+  display: block;
+  font-weight: 700;
+}
+
+.option-metadata {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+}
+
+.searchable-select-empty {
+  padding: 0.8rem;
+}
+
+
+/* =========================================================
+   11. Destructive actions
+   ========================================================= */
+
+.danger-zone {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-error-border);
+}
+
+.danger-zone h2 {
+  margin: 0;
+  color: var(--color-error);
+}
+
+.danger-zone p {
+  color: var(--color-text-muted);
+}
+
+.danger-button {
+  border-color: var(--color-error-border);
+  color: var(--color-error);
+  background: var(--color-error-background);
+}
+
+.danger-button:not(:disabled):hover {
+  color: white;
+  background: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.compact-button {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   12. Administration
+   ========================================================= */
+
+.admin-section {
+  padding: 1.25rem;
+}
+
+.admin-section + .admin-section {
+  margin-top: 1.5rem;
+}
+
+.admin-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.admin-section-header h2 {
+  margin: 0;
+}
+
+.admin-create-form,
+.admin-edit-form {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 0.7fr)
+    minmax(260px, 1.3fr)
+    auto;
+  align-items: end;
+  gap: 1rem;
+}
+
+.admin-create-form {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.admin-edit-form {
+  width: 100%;
+}
+
+.admin-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.admin-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-subtle);
+}
+
+.admin-item-information {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-item-information strong {
+  font-size: 1.05rem;
+}
+
+.admin-item-actions {
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+/* =========================================================
+   Normalized administration additions
+   ========================================================= */
+
+.admin-placeholder-section {
+  border-style: dashed;
+}
+
+.admin-placeholder-section h2 {
+  margin-top: 0;
+}
+
+.admin-section-header-with-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.admin-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+.admin-age-form {
+  grid-template-columns:
+    minmax(110px, 0.4fr)
+    minmax(190px, 0.8fr)
+    minmax(110px, 0.3fr)
+    auto;
+}
+
+.admin-lineage-form {
+  grid-template-columns:
+    minmax(150px, 0.45fr)
+    minmax(260px, 1fr)
+    auto;
+}
+
+.admin-full-width-field {
+  grid-column: 1 / -1;
+}
+
+.admin-create-form textarea,
+.admin-edit-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: var(--color-surface);
+  resize: vertical;
+}
+
+.admin-create-form textarea:focus,
+.admin-edit-form textarea:focus {
+  outline: 3px solid rgba(40, 93, 145, 0.16);
+  border-color: rgba(40, 93, 145, 0.65);
+}
+
+.admin-item-notes {
+  max-width: 46rem;
+  margin: 0.45rem 0 0;
+  color: var(--color-text-muted);
+  white-space: pre-wrap;
+}
+
+.admin-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.archive-badge {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  background: var(--color-page);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.admin-list-item-archived {
+  opacity: 0.72;
+}
+
+.admin-create-form input,
+.admin-create-form select,
+.admin-edit-form input,
+.admin-edit-form select {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.admin-create-form input:focus,
+.admin-create-form select:focus,
+.admin-edit-form input:focus,
+.admin-edit-form select:focus {
+  outline: 3px solid rgba(40, 93, 145, 0.16);
+  border-color: rgba(40, 93, 145, 0.65);
+}
+
+.admin-stage-form {
+  grid-template-columns:
+    minmax(180px, 0.75fr)
+    minmax(150px, 0.6fr)
+    minmax(150px, 0.65fr)
+    minmax(230px, 1fr)
+    auto;
+}
+
+/* =========================================================
+   Stage relationship administration
+   ========================================================= */
+
+.stage-relation-create-form {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.stage-relation-create-form > label,
+.stage-relation-edit-form > label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.stage-relation-create-form select,
+.stage-relation-create-form textarea,
+.stage-relation-edit-form select,
+.stage-relation-edit-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.stage-relation-create-form select:focus,
+.stage-relation-create-form textarea:focus,
+.stage-relation-edit-form select:focus,
+.stage-relation-edit-form textarea:focus {
+  outline: 3px solid rgba(40, 93, 145, 0.16);
+  border-color: rgba(40, 93, 145, 0.65);
+}
+
+.stage-relation-create-form textarea,
+.stage-relation-edit-form textarea {
+  resize: vertical;
+}
+
+.stage-relation-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.selected-stage-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  margin-bottom: 0.5rem;
+  padding: 0.55rem 0.65rem;
+
+  border: 1px solid rgba(40, 93, 145, 0.3);
+  border-radius: var(--radius-medium);
+
+  color: var(--color-link);
+  background: var(--color-link-background);
+}
+
+.selected-stage-display > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.selected-stage-display span {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.stage-relation-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.stage-relation-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+
+  background: var(--color-surface-subtle);
+}
+
+.stage-relation-content {
+  min-width: 0;
+}
+
+.stage-relation-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.stage-relation-arrow {
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+}
+
+.stage-relation-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+}
+
+.relation-category-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.relation-category-genetic {
+  color: #285d91;
+  background: #eaf2f9;
+  border: 1px solid #aac4dc;
+}
+
+.relation-category-contact {
+  color: #725016;
+  background: #fff7df;
+  border: 1px solid #dfc47c;
+}
+
+.relation-category-other {
+  color: var(--color-text-muted);
+  background: var(--color-page);
+  border: 1px solid var(--color-border-input);
+}
+
+.stage-relation-edit-form {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+.lexeme-filter-grid {
+  grid-template-columns:
+    minmax(240px, 1.45fr)
+    minmax(170px, 0.9fr)
+    minmax(170px, 0.9fr)
+    minmax(145px, 0.7fr)
+    auto
+    auto;
+  align-items: end;
+}
+
+.lexeme-search-field {
+  min-width: 0;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.filter-actions button {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Gloss and new-lexeme relationship editors
+   ========================================================= */
+
+.section-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.section-heading-row h3 {
+  margin: 0;
+}
+
+.section-heading-row p {
+  margin: 0.35rem 0 0;
+}
+
+.gloss-editor,
+.form-editor {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.gloss-editor-list,
+.form-editor-list,
+.new-relationship-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.gloss-editor-row,
+.form-editor-row {
+  display: grid;
+  align-items: end;
+  gap: 0.75rem;
+
+  padding: 0.85rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-subtle);
+}
+
+.gloss-editor-row {
+  grid-template-columns:
+    auto
+    minmax(180px, 0.8fr)
+    minmax(220px, 1.2fr)
+    auto;
+}
+
+.form-editor-row {
+  grid-template-columns:
+    auto
+    minmax(170px, 0.7fr)
+    minmax(180px, 1fr)
+    minmax(170px, 0.8fr)
+    auto;
+}
+
+.gloss-order,
+.form-order {
+  align-self: center;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.gloss-editor-row label,
+.form-editor-row label,
+.new-relationship-row label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.gloss-row-actions,
+.form-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.new-relationship-row {
+  display: grid;
+  gap: 1rem;
+
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-subtle);
+}
+
+.new-relationship-row select,
+.new-relationship-row textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.new-relationship-row textarea {
+  resize: vertical;
+}
+
+/* =========================================================
+   Lexeme relationship management
+   ========================================================= */
+
+.lexeme-relation-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lexeme-relation-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  padding: 0.85rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+
+  background: var(--color-surface-subtle);
+}
+
+.lexeme-relation-content {
+  min-width: 0;
+}
+
+.lexeme-relation-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.lexeme-relation-edit-form {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+.lexeme-relation-edit-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.lexeme-relation-edit-form select,
+.lexeme-relation-edit-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.relationship-metadata {
+  display: block;
+  margin: 0.4rem 0 0;
+}
+
+.detailed-gloss-list li,
+.detailed-form-list li {
+  margin-bottom: 1rem;
+}
+
+.detailed-gloss-list p,
+.detailed-form-list p {
+  margin: 0.3rem 0 0;
+}
+
+.danger-zone-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.filter-checkbox {
+  display: inline-flex;
+  align-items: center;
+  align-self: end;
+  gap: 0.5rem;
+
+  min-height: 3.25rem;
+  padding: 0 0.25rem;
+
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.filter-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+.archived-table-row {
+  opacity: 0.65;
+}
+
+.table-archive-badge {
+  margin-left: 0.5rem;
+}
+
+.archived-relation-item {
+  opacity: 0.7;
+}
+
+.review-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.needs-review-badge {
+  color: #8a5a00;
+  background: #fff5d6;
+}
+
+.reviewed-badge {
+  color: #28623b;
+  background: #e7f5eb;
+}
+
+.table-review-badge {
+  margin-left: 0.5rem;
+}
+
+/* =========================================================
+   Language-stage profile
+   ========================================================= */
+
+.stage-profile-relation-list,
+.stage-lexeme-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.stage-profile-relation,
+.stage-lexeme-item {
+  padding: 0.85rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-subtle);
+}
+
+.stage-profile-relation-heading,
+.stage-lexeme-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.stage-profile-relation-name {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+}
+
+.stage-lexeme-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stage-profile-checkbox {
+  min-height: auto;
+  padding: 0;
+}
+
+.grammar-path-display {
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-subtle);
+}
+
+.grammar-path-display code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-family:
+    "Cascadia Code",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+}
+
+.grammar-path-display p {
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   Grammar Markdown viewer
+   ========================================================= */
+
+.grammar-document {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-subtle);
+}
+
+.grammar-document-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  padding: 1rem;
+}
+
+.grammar-document-toolbar > div {
+  min-width: 0;
+}
+
+.grammar-document-toolbar code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-family:
+    "Cascadia Code",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+}
+
+.grammar-document-toolbar p {
+  margin: 0.4rem 0 0;
+}
+
+.grammar-load-error {
+  margin: 0 1rem 1rem;
+}
+
+.markdown-document {
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-surface);
+}
+
+.markdown-document > :first-child {
+  margin-top: 0;
+}
+
+.markdown-document > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-document h1,
+.markdown-document h2,
+.markdown-document h3,
+.markdown-document h4,
+.markdown-document h5,
+.markdown-document h6 {
+  line-height: 1.25;
+}
+
+.markdown-document h1 {
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 2rem;
+}
+
+.markdown-document h2 {
+  margin: 1.8rem 0 0.85rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 1.55rem;
+}
+
+.markdown-document h3 {
+  margin: 1.5rem 0 0.7rem;
+  font-size: 1.25rem;
+}
+
+.markdown-document p,
+.markdown-document li {
+  line-height: 1.65;
+}
+
+.markdown-document ul,
+.markdown-document ol {
+  padding-left: 1.75rem;
+}
+
+.markdown-document blockquote {
+  margin: 1rem 0;
+  padding: 0.1rem 1rem;
+  border-left: 4px solid var(--color-border-input);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+}
+
+.markdown-document code {
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+  background: var(--color-page);
+  font-family:
+    "Cascadia Code",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  font-size: 0.9em;
+}
+
+.markdown-document pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-medium);
+  background: var(--color-page);
+}
+
+.markdown-document pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.markdown-document table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.markdown-document th,
+.markdown-document td {
+  min-width: 8rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border);
+}
+
+.markdown-document th {
+  background: var(--color-surface-subtle);
+}
+
+.markdown-document hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.markdown-document img {
+  max-width: 100%;
+  height: auto;
+}
+
+.admin-stage-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.admin-stage-link:hover {
+  text-decoration: underline;
+}
+
+.admin-stage-link:visited {
+  color: inherit;
+}
+
+.markdown-document li {
+  display: list-item;
+}
+
+.markdown-document li > a {
+  display: inline;
+}
+
+.markdown-document h1,
+.markdown-document h2,
+.markdown-document h3,
+.markdown-document h4,
+.markdown-document h5,
+.markdown-document h6 {
+  scroll-margin-top: 1rem;
+}
+
+.shortcut-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 0.5rem;
+  background: #f7f7f7;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.shortcut-hints > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.shortcut-hints kbd {
+  padding: 0.12rem 0.4rem;
+  border: 1px solid #bbb;
+  border-bottom-width: 2px;
+  border-radius: 0.3rem;
+  background: white;
+  color: #333;
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+
+.migration-marker {
+  margin-top: .5rem;
+  color: #8b8b8b;
+  font-size: .9rem;
+}
+
+.migration-marker strong {
+  margin-left: .4rem;
+  color: #666;
+  font-style: italic;
+}
+
+.forms-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.forms-toggle input {
+  width: auto;
+  margin: 0;
+}
+
+.form-editor-content {
+  margin-top: 1rem;
+}
+
+.inheritance-import-section {
+  border-top: 1px solid var(--border-color);
+}
+
+.inheritance-import-controls {
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.inheritance-archive-checkbox {
+  align-self: end;
+  margin-bottom: 0.65rem;
+}
+
+.inheritance-import-preview {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.inheritance-import-preview h3 {
+  margin-top: 0;
+}
+
+.confirmation-field {
+  display: block;
+  margin: 1rem 0;
+}
+
+.confirmation-field input {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  margin-top: 0.4rem;
+}
+
+.warning-message {
+  padding: 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.4rem;
+}
+
+.success-message {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.danger-zone {
+  border: 1px solid #b42318;
+}
+
+.danger-zone h2,
+.danger-zone h3 {
+  color: #b42318;
+}
+
+.danger-zone-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #b42318;
+  border-radius: 0.5rem;
+}
+
+.danger-button {
+  border: 1px solid #b42318;
+  background: #b42318;
+  color: white;
+  padding: 0.65rem 1rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+}
+
+.danger-button:hover:not(:disabled) {
+  background: #912018;
+}
+
+.danger-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.warning-message {
+  font-weight: 600;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.result-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.result-shortcut-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.result-shortcut-hint > span {
+  margin-left: 0.25rem;
+}
+
+.lexeme-class-form,
+.lexeme-class-edit-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.lexeme-class-form {
+  grid-template-columns:
+    minmax(10rem, 0.75fr)
+    minmax(16rem, 2fr)
+    auto;
+
+  align-items: end;
+  margin: 1rem 0 1.5rem;
+}
+
+.lexeme-class-form textarea,
+.lexeme-class-edit-form textarea {
+  resize: vertical;
+}
+
+.lexeme-class-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lexeme-class-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.lexeme-class-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.lexeme-class-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.lexeme-class-heading h3 {
+  margin: 0;
+}
+
+.lexeme-class-content p {
+  margin-bottom: 0;
+}
+
+.lexeme-class-edit-form {
+  width: 100%;
+}
+
+.searchable-select-hint {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.searchable-select-hint code {
+  font-size: inherit;
+}
+
+@media (max-width: 800px) {
+  .lexeme-class-form {
+    grid-template-columns: 1fr;
+  }
+
+  .lexeme-class-item {
+    flex-direction: column;
+  }
+}
+
+/* =========================================================
+   13. Responsive layout
+   ========================================================= */
+
+@media (max-width: 1100px) and (min-width: 701px) {
+  .lexeme-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-checkbox {
+    min-height: auto;
+    padding: 0;
+  }
+
+  .filter-actions {
+    align-items: stretch;
+  }
+
+  .filter-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .page-header,
+  .form-heading,
+  .lexeme-header {
+    display: block;
+  }
+
+  .page-header button,
+  .form-heading .secondary-button,
+  .lexeme-header button {
+    margin-top: 1rem;
+  }
+
+  .header-actions {
+    align-items: stretch;
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+
+  .header-actions a,
+  .header-actions button {
+    width: 100%;
+  }
+
+  .filters,
+  .form-grid,
+  .metadata-grid,
+  .relationship-editor-grid,
+  .current-relationships,
+  .relationship-display-grid,
+  .relationship-selector-grid,
+  .admin-create-form,
+  .admin-edit-form,
+  .admin-age-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-list-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-item-actions {
+    justify-content: flex-start;
+  }
+
+  .relationship-list-row {
+    display: block;
+  }
+
+  .relationship-list-row .compact-button {
+    margin-top: 0.75rem;
+  }
+
+  .app a {
+    max-width: 100%;
+  }
+  
+  .admin-age-form,
+  .admin-lineage-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-section-header-with-actions {
+    display: block;
+  }
+
+  .admin-checkbox {
+    margin-top: 1rem;
+  }
+
+  .admin-stage-form {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-relation-selector-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-relation-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .lexeme-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-checkbox {
+    min-height: auto;
+    padding: 0;
+  }
+
+  .filter-actions button {
+    width: 100%;
+  }
+
+  .section-heading-row {
+    display: block;
+  }
+
+  .section-heading-row button {
+    margin-top: 1rem;
+  }
+
+  .gloss-editor-row,
+  .form-editor-row {
+    grid-template-columns: 1fr;
+  }
+
+  .gloss-row-actions,
+  .form-row-actions {
+    flex-wrap: wrap;
+  }
+
+  .lexeme-relation-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .danger-zone-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .danger-zone-actions button {
+    width: 100%;
+  }
+
+  .stage-lexeme-item {
+    flex-direction: column;
+  }
+
+  .grammar-document-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .grammar-document-toolbar button {
+    width: 100%;
+  }
+
+  .markdown-document {
+    padding: 1rem;
+  }
+}
